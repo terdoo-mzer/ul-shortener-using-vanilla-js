@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <p id="p">Click on the button to copy the text from the text field. Try to paste the text (e.g. ctrl+v) afterwards
+        in a different window, to see the effect.</p>
+
+    <button id="btn" onclick="copyTextFromElement('p')">Copy text</button>
+
+
+
+
+
+    <script>
+        //If you want to copyText from Element
+        function copyTextFromElement(elementID) {
+            let element = document.getElementById(elementID); //select the element
+            let elementText = element.textContent; //get the text content from the element
+            // copyText(elementText); //use the copyText function below
+            //If you only want to put some Text in the Clipboard just use this function
+            // and pass the string to copied as the argument.
+            function copyText(elementText) {
+                navigator.clipboard.writeText(text);
+                text ? document.getElementById('btn').innerHTML = 'Copied!' : alert('failed')
+            }
+        }
+    </script>
+
+</body>
+
+</html>

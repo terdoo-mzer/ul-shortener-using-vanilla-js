@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <form id="myForm">
+        <input type="text " placeholder="url" id="userUrl">
+        <button type="submit">Submit</button>
+    </form>
+    <ul id="result"></ul>
+    <script>
+        // https://stackabuse.com/how-to-copy-to-clipboard-in-javascript-with-the-clipboard-api/
+        // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Interact_with_the_clipboard
+
+        const form = document.getElementById('myForm');
+        const input = document.getElementById('userUrl');
+        const result = document.getElementById('result');
+        let arr = [];
+
+
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault()
+            const val = input.value;
+            console.log(input.value)
+            requestApi(val)
+        })
+
+        function requestApi(val) {
+            if (val !== '') {
+                fetch(`https://api.shrtco.de/v2/shorten?url=${val}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        arr.push(data.result)
+                        setLocStorage(arr)
+                        // console.log(data.result)
+                        displayUrl(arr)
+                        // console.log(arr)
+                    })
+            } else {
+                alert('Empty field!')
+            }
+
+        }
+        function displayUrl(arr) {
+            result.innerHTML = '';
+            arr.forEach(element => {
+
+                const listItem = document.createElement('li');
+
+                const span1 = document.createElement('span');
+                const span2 = document.createElement('span');
+                const btn = document.createElement('button');
+
+                btn.setAttribute('class', 'copy_btn')
+                span1.setAttribute('class', 'shortLink')
+
+                const shortened_link = short_original_link(element.original_link)
+
+                btn.innerHTML = 'Copy';
+                span1.textContent = element.full_short_link;
+                span2.textContent = shortened_link;
+
+                listItem.appendChild(span1);
+                listItem.prepend(span2);
+                listItem.appendChild(btn);
+                result.appendChild(listItem);
+
+                btn.addEventListener('click', e => {
+                    copyTextFromElement(span1, btn)
+                })
+
+            });
+        }
+
+        function short_original_link(link) {
+            if (link.length >= 50) {
+                let shortStr = link.slice(0, 45) + '...'
+                // console.log(shortStr)
+                return shortStr
+            } else {
+                return link
+            }
+        }
+
+        function setLocStorage(data) {
+            // Push into array
+            localStorage.setItem('data', JSON.stringify(data));
+            displayUrl(data)
+        }
+
+        function getLocalStore() {
+            let reference = localStorage.getItem('data')
+            if (reference) {
+                arr = JSON.parse(reference);
+                // console.log(arr)
+                displayUrl(arr);
+            } else {
+                localStorage.setItem('data', [])
+            }
+        }
+
+
+
+        getLocalStore()
+
+
+        function copyTextFromElement(element, btn) {
+
+            let elementText = element.textContent;
+            navigator.clipboard.writeText(elementText);
+            elementText ? btn.innerHTML = 'Copied!' : alert('failed')
+
+            setTimeout(function changeCopyText() {
+                btn.innerHTML = 'Copy'
+            }, 1000)
+
+        }
+
+
+
+    </script>
+</body>
+
+</html>
