@@ -12,7 +12,8 @@
 
     <form id="myForm">
         <input type="text " placeholder="url" id="userUrl">
-        <button type="submit">Submit</button>
+        
+        <button type="submit" id="submit_btn"><span id="submit_text">Submit</span><span id="spinner" hidden>Loading</span></button>
     </form>
     <ul id="result"></ul>
     <script>
@@ -22,6 +23,9 @@
         const form = document.getElementById('myForm');
         const input = document.getElementById('userUrl');
         const result = document.getElementById('result');
+        const submit_btn = document.getElementById('sumit_btn');
+        const submit_text = document.getElementById('submit_text');
+        const spinner = document.getElementById('spinner');
         let arr = [];
 
 
@@ -36,7 +40,13 @@
         function requestApi(val) {
             if (val !== '') {
                 fetch(`https://api.shrtco.de/v2/shorten?url=${val}`)
-                    .then(response => response.json())
+                    .then(response => { 
+                        if(!response.ok) {
+                            console.log('Please check the link and try again again')
+                            return
+                        };
+                        return response.json();
+                    })
                     .then(data => {
                         arr.push(data.result)
                         setLocStorage(arr)
@@ -62,7 +72,7 @@
                 btn.setAttribute('class', 'copy_btn')
                 span1.setAttribute('class', 'shortLink')
 
-                const shortened_link = short_original_link(element.original_link)
+                const shortened_link = slice_original_link(element.original_link)
 
                 btn.innerHTML = 'Copy';
                 span1.textContent = element.full_short_link;
@@ -80,7 +90,11 @@
             });
         }
 
-        function short_original_link(link) {
+        function err() {
+
+        }
+
+        function slice_original_link(link) {
             if (link.length >= 50) {
                 let shortStr = link.slice(0, 45) + '...'
                 // console.log(shortStr)
@@ -91,7 +105,6 @@
         }
 
         function setLocStorage(data) {
-            // Push into array
             localStorage.setItem('data', JSON.stringify(data));
             displayUrl(data)
         }
@@ -107,10 +120,7 @@
             }
         }
 
-
-
         getLocalStore()
-
 
         function copyTextFromElement(element, btn) {
 
@@ -119,13 +129,10 @@
             elementText ? btn.innerHTML = 'Copied!' : alert('failed')
 
             setTimeout(function changeCopyText() {
-                btn.innerHTML = 'Copy'
+                btn.innerHTML = 'Copy' // Chnage button text back 
             }, 1000)
 
         }
-
-
-
     </script>
 </body>
 
