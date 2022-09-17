@@ -10,6 +10,8 @@ toggler.addEventListener('click', toggleMenu)
 
 // https://stackabuse.com/how-to-copy-to-clipboard-in-javascript-with-the-clipboard-api/
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Interact_with_the_clipboard
+// https://samherbert.net/svg-loaders/
+// https://github.com/SamHerbert/SVG-Loaders
 
 const form = document.getElementById('myForm');
 const input = document.getElementById('userUrl');
@@ -69,14 +71,16 @@ function displayUrl(arr) {
         const btn = document.createElement('button');
 
         theOriginalLink.setAttribute('class', 'original_link');
+        theOriginalLink.setAttribute("title", `${element.original_link}`);
         btn.setAttribute('class', 'copy_btn btn')
-        theShortenedLink.setAttribute('class', 'short_link')
+        theShortenedLink.setAttribute('class', 'short_link');
 
-        const shortened_link = truncate_original_link(element.original_link)
+
+        const truncated_long_link = truncate_original_link(element.original_link)
 
         btn.innerHTML = 'Copy';
         theShortenedLink.textContent = element.full_short_link;
-        theOriginalLink.textContent = shortened_link;
+        theOriginalLink.textContent = truncated_long_link;
 
         
         div.prepend(theShortenedLink);
